@@ -195,10 +195,13 @@ class Game:
                 self.hitOrMiss(player)
             elif (player.hand.score == 21):
                 print("Blackjack!")
+                return
             else:
                 print("Sorry, bust.")
+                return
         elif (arg == 'stand'):
             print("Standing, okay")
+            return
 
     def dealerHitOrMiss(self, dealer):
         while(self.dealer.hand.score < 17):
