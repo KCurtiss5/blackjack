@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-
-#blackjack
 import random
 import sys
 
@@ -47,7 +44,7 @@ class Hand:
 
     def __str__(self):
         return " and ".join(str(c) for c in self.cards)
-        
+
 
 class Dealer:
     def __init__(self):
@@ -55,9 +52,6 @@ class Dealer:
 
     def firstReveal(self):
         print("Dealer has: " + str(self.hand.cards[0]) + " and one covered card.")
-
-    def __str__(self):
-        return str(self.moneyGains)
 
 class Player():
     def __init__(self, name):
@@ -71,11 +65,15 @@ class Player():
 
     def doBet(self):
         self.bet = 0
+        print(self.name, end=", ")
         try:
-            while (self.bet == 0 or self.bet > self.money):
-                print(self.name,end=", ")
-                self.bet = int(input("enter your bet: "))
-        except:
+            self.bet = int(input("enter your bet: "))
+            assert(self.bet > 0 and self.bet <= self.money)
+        except AssertionError as e:
+            print("Not a valid bet.")
+            self.doBet()
+        except ValueError as e:
+            print("Please enter a positive integer.")
             self.doBet()
 
     def calcBet(self, boolean):
@@ -93,7 +91,7 @@ class Deck:
 
     def buildDeck(self, numDecks):
         deck = []
-        for i in range(0, numDecks): 
+        for i in range(0, numDecks):
             for x in ["Spades","Clubs","Diamonds","Hearts"]:
                 for y in range(2,11):
                     deck.append(Card(x,y))
@@ -113,7 +111,7 @@ class Deck:
         card = self.deck.pop(0)
         player.receiveCard(card)
         return card
-        
+
 class Game:
     #players is a list of all players
     #deck is a deck object
@@ -133,7 +131,7 @@ class Game:
         except:
             self.start()
         self.doARound()
-        
+
     def doARound(self):
         #Display how much money everyone has
         for p in self.players:
@@ -167,11 +165,19 @@ class Game:
         self.whoWon(self.players,self.dealer)
         #clear hands
         self.clearHands(self.deck,self.players,self.dealer)
-        if(input("Want to play again? (y/n): ").lower().strip() == 'y'):
+        #check if anyone has no money
+        for p in reversed(self.players):
+            if p.money == 0:
+                print("I'm sorry " + p.getName() + ". You don't have anymore money. Please leave the table.")
+                self.players.remove(p)
+        #If there are no more players, end the game
+        if len(self.players) == 0:
+            self.endGame()
+        if(input("\nWant to play again? (y/n): ").lower().strip() == 'y'):
             self.doARound()
         else:
-            sys.exit()
-        
+            self.endGame()
+
     def tableBetting(self):
         for p in self.players:
             p.doBet()
@@ -201,17 +207,12 @@ class Game:
         print("Dealer has " + str(self.dealer.hand.score))
 
     def whoWon(self, player, dealer):
-        scoreToBeat = dealer.hand.score
         for p in player:
-            if(p.hand.score > 21):
-                print(p.name + " lost $" + str(p.bet))
-                p.calcBet(False)
-            elif(dealer.hand.score > 21):
+            if(dealer.hand.score > 21 or p.hand.score > dealer.hand.score and p.hand.score <= 21):
                 print(p.name + " won $" + str(p.bet))
                 p.calcBet(True)
-            elif(p.hand.score > scoreToBeat):
-                print(p.name + " won $" + str(p.bet))
-                p.calcBet(True)
+            elif(p.hand.score <= 21 and p.hand.score == dealer.hand.score):
+                print(p.name + " pushed.")
             else:
                 print(p.name + " lost $" + str(p.bet))
                 p.calcBet(False)
@@ -224,7 +225,10 @@ class Game:
     def printPlayers(self):
         for p in self.players:
             p.showPlayer()
-        
+
+    def endGame(self):
+        sys.exit()
+
 
 if __name__ == '__main__':
     deck = Deck(3)
