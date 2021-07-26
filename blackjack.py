@@ -185,7 +185,7 @@ class Game:
         while (True):
             playAgain = input("\nWant to play again? (y/n): ").lower().strip()
             if(playAgain == 'y' or playAgain == 'n' or playAgain == "yes" or playAgain == "no"):
-                break;
+                break
         if(playAgain == 'y' or playAgain == "yes"):
             self.doARound()
         else:
