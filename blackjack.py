@@ -1,5 +1,7 @@
 import random
 import sys
+import time
+import os
 
 class Card:
     def __init__(self, suit, num):
@@ -43,7 +45,7 @@ class Hand:
         return self.score
 
     def __str__(self):
-        return " and ".join(str(c) for c in self.cards)
+        return ", ".join(str(c) for c in self.cards)
 
 
 class Dealer:
@@ -51,7 +53,7 @@ class Dealer:
         self.hand = Hand()
 
     def firstReveal(self):
-        print("Dealer has: " + str(self.hand.cards[0]) + " and one covered card.")
+        print("Dealer has a " + str(self.hand.cards[0]) + " and one covered card.")
 
 class Player():
     def __init__(self, name):
@@ -70,7 +72,7 @@ class Player():
             self.bet = int(input("enter your bet: "))
             assert(self.bet > 0 and self.bet <= self.money)
         except AssertionError as e:
-            print("Not a valid bet.")
+            print("That is not a valid bet.")
             self.doBet()
         except ValueError as e:
             print("Please enter a positive integer.")
@@ -104,7 +106,7 @@ class Deck:
             random.shuffle(self.deck)
 
     def __str__(self):
-        print(", ".join(str(c) for c in self.deck))
+        return(", ".join(str(c) for c in self.deck))
 
     def drawTopCard(self, player):
         #return a card and it should go to a hand
@@ -124,23 +126,31 @@ class Game:
 
     def start(self):
         try:
-            numOfPlayers = input("How many players?: ")
-            for i in range(0,int(numOfPlayers)):
-                self.players.append(Player(input("What is player"+str(i+1)+"'s name?: ")))
-            print()
-        except:
+            numOfPlayers = int(input("How many players?: "))
+            assert(numOfPlayers >= 1)
+        except ValueError as e:
+            print("Please enter a number for the number of players.")
             self.start()
+        except AssertionError as e:
+            print("Please enter a positive integer.")
+            self.start()
+
+        for i in range(0,int(numOfPlayers)):
+            self.players.append(Player(input("What is player"+str(i+1)+"'s name?: ").strip()))
+        print()
         self.doARound()
 
     def doARound(self):
+        os.system('clear')
         #Display how much money everyone has
         for p in self.players:
             print(p.name + " has $" + str(p.money))
         #shuffle decks
         print("\nShuffling...\n")
+        time.sleep(1.5)
         self.deck.shuffle()
         #make players bet
-        print("Everyone, make a bet\n")
+        print("Everyone, make a bet.\n")
         #deal cards to players
         self.tableBetting()
         for i in range(0,2):
@@ -148,10 +158,8 @@ class Game:
                 self.deck.drawTopCard(player.hand)
             #deal cards to dealer
             self.deck.drawTopCard(self.dealer.hand)
-        print("Dealing...\n")
-        #reveal player hands
-        for p in self.players:
-            print(p.name + " has " + str(p.hand))
+        print("\nDealing...\n")
+        time.sleep(1)
         #reveal dealer first card
         self.dealer.firstReveal()
         #Let players hit or stand
@@ -159,6 +167,7 @@ class Game:
             self.hitOrMiss(p)
         #dealer reveals his second card
         print("\nDealers turn...\n\nDealer has " + str(self.dealer.hand))
+        time.sleep(1.5)
         #dealer does his thing
         self.dealerHitOrMiss(self.dealer)
         #who won?
@@ -173,7 +182,11 @@ class Game:
         #If there are no more players, end the game
         if len(self.players) == 0:
             self.endGame()
-        if(input("\nWant to play again? (y/n): ").lower().strip() == 'y'):
+        while (True):
+            playAgain = input("\nWant to play again? (y/n): ").lower().strip()
+            if(playAgain == 'y' or playAgain == 'n' or playAgain == "yes" or playAgain == "no"):
+                break;
+        if(playAgain == 'y' or playAgain == "yes"):
             self.doARound()
         else:
             self.endGame()
@@ -183,14 +196,15 @@ class Game:
             p.doBet()
 
     def hitOrMiss(self,player):
-        print("\n" + player.getName() + ", you have " + str(player.hand.score) + ".",end="")
+        print("\n" + player.getName() + " has " + str(player.hand) + ".",end="\n")
         if player.hand.score == 21:
             print("\nYou already have blackjack!")
+            time.sleep(2.5)
             return
-        arg = input(" Hit or stand?: ").lower().strip()
+        arg = input("Hit or stand?: ").lower().strip()
         if (arg == 'hit'):
             card = self.deck.drawTopCard(player.hand)
-            print(card)
+            print("You drew a " + str(card), end=".\n")
             if (player.hand.score < 21):
                 self.hitOrMiss(player)
             elif (player.hand.score == 21):
@@ -205,22 +219,22 @@ class Game:
 
     def dealerHitOrMiss(self, dealer):
         while(self.dealer.hand.score < 17):
-            print("Dealer has " + str(self.dealer.hand.score))
             card = self.deck.drawTopCard(self.dealer.hand)
-            print("Hitting...dealer drew: " + str(card))
-        if (self.dealer.hand.score > 21):
-            print("Dealer busted")
-        print("Dealer has " + str(self.dealer.hand.score))
+            time.sleep(0.5)
+            print("Hitting...\nDealer drew: " + str(card))
+        print("Standing.. ")
 
     def whoWon(self, player, dealer):
+        print("\nDealer has " + str(dealer.hand.score), end=".\n")
         for p in player:
+            print("\n" + p.getName() + " has " + str(p.hand.score), end=", so ")
             if(dealer.hand.score > 21 or p.hand.score > dealer.hand.score and p.hand.score <= 21):
-                print(p.name + " won $" + str(p.bet))
+                print("they won $" + str(p.bet))
                 p.calcBet(True)
             elif(p.hand.score <= 21 and p.hand.score == dealer.hand.score):
-                print(p.name + " pushed.")
+                print("they pushed.")
             else:
-                print(p.name + " lost $" + str(p.bet))
+                print("they lost $" + str(p.bet))
                 p.calcBet(False)
 
     def clearHands(self, deck, player, dealer):
@@ -244,6 +258,4 @@ TODO:
 split hand
 double-down
 surrender
-edge cases:
-blackjack off the bat
 '''
