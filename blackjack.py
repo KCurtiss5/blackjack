@@ -128,10 +128,10 @@ class Game:
     def start(self):
         try:
             numOfPlayers = int(input("How many players?: "))
-            assert(numOfPlayers >= 1)
             self.minimum_bet = int(input("What is the minimum bet?: "))
+            assert(numOfPlayers >= 1 and self.minimum_bet >= 1)
         except ValueError as e:
-            print("Please enter a number for the number of players.")
+            print("Please enter a positive integer.")
             self.start()
         except AssertionError as e:
             print("Please enter a positive integer.")
@@ -229,7 +229,7 @@ class Game:
     def whoWon(self, player, dealer):
         print("\nDealer has " + str(dealer.hand.score), end=".\n")
         for p in player:
-            print("\n" + p.getName() + " has " + str(p.hand.score), end=", so ")
+            print(p.getName() + " has " + str(p.hand.score), end=", so ")
             if(dealer.hand.score > 21 or p.hand.score > dealer.hand.score and p.hand.score <= 21):
                 print("they won $" + str(p.bet))
                 p.calcBet(True)
