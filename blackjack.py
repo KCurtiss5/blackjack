@@ -65,18 +65,18 @@ class Player():
     def getName(self):
         return self.name
 
-    def doBet(self):
-        self.bet = 0
+    def doBet(self, minimum_bet):
+        self.bet = minimum_bet
         print(self.name, end=", ")
         try:
             self.bet = int(input("enter your bet: "))
-            assert(self.bet > 0 and self.bet <= self.money)
+            assert(self.bet >= minimum_bet and self.bet <= self.money)
         except AssertionError as e:
             print("That is not a valid bet.")
-            self.doBet()
+            self.doBet(minimum_bet)
         except ValueError as e:
             print("Please enter a positive integer.")
-            self.doBet()
+            self.doBet(minimum_bet)
 
     def calcBet(self, boolean):
         if(boolean):
@@ -122,12 +122,14 @@ class Game:
         self.players = []
         self.deck = deck
         self.dealer = Dealer()
+        self.minimum_bet = 1
         self.start()
 
     def start(self):
         try:
             numOfPlayers = int(input("How many players?: "))
             assert(numOfPlayers >= 1)
+            self.minimum_bet = int(input("What is the minimum bet?: "))
         except ValueError as e:
             print("Please enter a number for the number of players.")
             self.start()
@@ -193,7 +195,7 @@ class Game:
 
     def tableBetting(self):
         for p in self.players:
-            p.doBet()
+            p.doBet(self.minimum_bet)
 
     def hitOrMiss(self,player):
         print("\n" + player.getName() + " has " + str(player.hand) + ".",end="\n")
