@@ -184,6 +184,9 @@ class Game:
 
     def hitOrMiss(self,player):
         print("\n" + player.getName() + ", you have " + str(player.hand.score) + ".",end="")
+        if player.hand.score == 21:
+            print("\nYou already have blackjack!")
+            return
         arg = input(" Hit or stand?: ").lower().strip()
         if (arg == 'hit'):
             card = self.deck.drawTopCard(player.hand)
@@ -192,10 +195,13 @@ class Game:
                 self.hitOrMiss(player)
             elif (player.hand.score == 21):
                 print("Blackjack!")
+                return
             else:
                 print("Sorry, bust.")
+                return
         elif (arg == 'stand'):
             print("Standing, okay")
+            return
 
     def dealerHitOrMiss(self, dealer):
         while(self.dealer.hand.score < 17):
