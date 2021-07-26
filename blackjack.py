@@ -240,6 +240,4 @@ double-down
 surrender
 edge cases:
 blackjack off the bat
-formatting between games
-if a player runs out of money, delete them. If no more players, end the game
 '''
