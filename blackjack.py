@@ -78,8 +78,10 @@ class Player():
             print("Please enter a positive integer.")
             self.doBet(minimum_bet)
 
-    def calcBet(self, boolean):
-        if(boolean):
+    def calcBet(self, won, nat_blackjack_payout=False):
+        if (nat_blackjack_payout):
+            self.money = self.money + (1.5 * self.bet)
+        elif(won):
             self.money = self.money + self.bet
         else:
             self.money = self.money - self.bet
@@ -108,11 +110,9 @@ class Deck:
     def __str__(self):
         return(", ".join(str(c) for c in self.deck))
 
-    def drawTopCard(self, player):
+    def drawTopCard(self):
         #return a card and it should go to a hand
-        card = self.deck.pop(0)
-        player.receiveCard(card)
-        return card
+        return(self.deck.pop(0))
 
 class Game:
     #players is a list of all players
@@ -157,9 +157,9 @@ class Game:
         self.tableBetting()
         for i in range(0,2):
             for player in self.players:
-                self.deck.drawTopCard(player.hand)
+                player.hand.receiveCard(self.deck.drawTopCard())
             #deal cards to dealer
-            self.deck.drawTopCard(self.dealer.hand)
+            self.dealer.hand.receiveCard(self.deck.drawTopCard())
         print("\nDealing...\n")
         time.sleep(1)
         #reveal dealer first card
@@ -179,7 +179,7 @@ class Game:
         #check if anyone has no money
         for p in reversed(self.players):
             if p.money == 0:
-                print("I'm sorry " + p.getName() + ". You don't have anymore money. Please leave the table.")
+                print("I'm sorry " + p.getName() + ". You don't have any money. Please leave the table.")
                 self.players.remove(p)
         #If there are no more players, end the game
         if len(self.players) == 0:
@@ -205,7 +205,8 @@ class Game:
             return
         arg = input("Hit or stand?: ").lower().strip()
         if (arg == 'hit'):
-            card = self.deck.drawTopCard(player.hand)
+            card = self.deck.drawTopCard()
+            player.hand.receiveCard(card)
             print("You drew a " + str(card), end=".\n")
             if (player.hand.score < 21):
                 self.hitOrMiss(player)
@@ -218,10 +219,13 @@ class Game:
         elif (arg == 'stand'):
             print("Standing, okay")
             return
+        else:
+            self.hitOrMiss(player)
 
     def dealerHitOrMiss(self, dealer):
         while(self.dealer.hand.score < 17):
-            card = self.deck.drawTopCard(self.dealer.hand)
+            card = self.deck.drawTopCard()
+            self.dealer.hand.receiveCard(card)
             time.sleep(0.5)
             print("Hitting...\nDealer drew: " + str(card))
         print("Standing.. ")
@@ -230,7 +234,10 @@ class Game:
         print("\nDealer has " + str(dealer.hand.score), end=".\n")
         for p in player:
             print(p.getName() + " has " + str(p.hand.score), end=", so ")
-            if(dealer.hand.score > 21 or p.hand.score > dealer.hand.score and p.hand.score <= 21):
+            if (p.hand.score == 21 and len(p.hand.cards)==2 and dealer.hand.score != 21):
+                print("natural blackjack! 3:2 payout. they won ${}".format(1.5*p.bet))
+                p.calcBet(True, True)
+            elif((p.hand.score > dealer.hand.score and p.hand.score <= 21) or (dealer.hand.score > 21 and p.hand.score <=21)):
                 print("they won $" + str(p.bet))
                 p.calcBet(True)
             elif(p.hand.score <= 21 and p.hand.score == dealer.hand.score):
@@ -255,9 +262,3 @@ class Game:
 if __name__ == '__main__':
     deck = Deck(3)
     game = Game(deck)
-'''
-TODO:
-split hand
-double-down
-surrender
-'''
