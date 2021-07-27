@@ -132,17 +132,16 @@ class Game:
 |___/|____||_|_| \___||_|\_\ \__/ |_|_| \___||_|\_\\
         \n''')
         print("Set up your game: \n")
-        try:
-            numOfPlayers = int(input("How many players?: "))
-            self.minimum_bet = int(input("What is the minimum bet?: "))
-            assert(numOfPlayers >= 1 and self.minimum_bet >= 1)
-        except ValueError as e:
-            print("Please enter a positive integer.")
-            self.start()
-        except AssertionError as e:
-            print("Please enter a positive integer.")
-            self.start()
-
+        while(True):
+            try:
+                numOfPlayers = int(input("How many players?: "))
+                self.minimum_bet = int(input("What is the minimum bet?: "))
+                assert(numOfPlayers >= 1 and self.minimum_bet >= 1)
+                break
+            except ValueError as e:
+                print("Please enter a positive integer.")
+            except AssertionError as e:
+                print("Please enter a positive integer.")
         for i in range(0,int(numOfPlayers)):
             self.players.append(Player(input("What is player"+str(i+1)+"'s name?: ").strip()))
         print()
@@ -262,7 +261,8 @@ class Game:
             p.showPlayer()
 
     def endGame(self):
-        sys.exit()
+        print("Goodbye!")
+        quit()
 
 
 if __name__ == '__main__':
