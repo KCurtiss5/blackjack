@@ -126,6 +126,12 @@ class Game:
         self.start()
 
     def start(self):
+        print(''' ___  _     ___   ___  _  __    _  ___   ___  _  __
+| _ )| |   /   \ / __|| |/ / _ | |/   \ / __|| |/ /
+| _ \| |__ | - || (__ |   < | || || - || (__ |   <
+|___/|____||_|_| \___||_|\_\ \__/ |_|_| \___||_|\_\\
+        \n''')
+        print("Set up your game: \n")
         try:
             numOfPlayers = int(input("How many players?: "))
             self.minimum_bet = int(input("What is the minimum bet?: "))
@@ -143,7 +149,7 @@ class Game:
         self.doARound()
 
     def doARound(self):
-        os.system('clear')
+        os.system('cls' if os.name == 'nt' else 'clear')
         #Display how much money everyone has
         for p in self.players:
             print(p.name + " has $" + str(p.money))
