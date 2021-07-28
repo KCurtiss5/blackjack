@@ -2,6 +2,7 @@ import random
 import sys
 import time
 import os
+import re
 
 class Card:
     def __init__(self, suit, num):
@@ -143,7 +144,14 @@ class Game:
             except AssertionError as e:
                 print("Please enter a positive integer.")
         for i in range(0,int(numOfPlayers)):
-            self.players.append(Player(input("What is player"+str(i+1)+"'s name?: ").strip()))
+            while(True):
+                try:
+                    self.addPlayer(i)
+                    break
+                except Exception as e:
+                    print(e)
+                except AssertionError as e:
+                    print("Please enter a name with only letters, please.")
         print()
         self.doARound()
 
@@ -197,6 +205,16 @@ class Game:
             self.doARound()
         else:
             self.endGame()
+
+    def addPlayer(self, num):
+        regex = re.compile("^[A-Za-z]+( {1}[A-Za-z]+)*$")
+        name = input("What is player "+str(num+1)+"'s name?: ").strip().title()
+        assert(regex.search(name))
+        new_player = Player(name)
+        for p in self.players:
+            if(p.name == name):
+                raise Exception("Sorry, no duplicate names.")
+        self.players.append(new_player)
 
     def tableBetting(self):
         for p in self.players:
