@@ -3,6 +3,7 @@ import sys
 import time
 import os
 import re
+import menu
 
 class Card:
     def __init__(self, suit, num):
@@ -127,12 +128,6 @@ class Game:
         self.start()
 
     def start(self):
-        print(''' ___  _     ___   ___  _  __    _  ___   ___  _  __
-| _ )| |   /   \ / __|| |/ / _ | |/   \ / __|| |/ /
-| _ \| |__ | - || (__ |   < | || || - || (__ |   <
-|___/|____||_|_| \___||_|\_\ \__/ |_|_| \___||_|\_\\
-        \n''')
-        print("Set up your game: \n")
         while(True):
             try:
                 numOfPlayers = int(input("How many players?: "))
@@ -282,7 +277,9 @@ class Game:
         print("Goodbye!")
         quit()
 
-
-if __name__ == '__main__':
+def blackjack_main() -> None:
     deck = Deck(3)
     game = Game(deck)
+
+if __name__ == '__main__':
+    menu.menu_main()
