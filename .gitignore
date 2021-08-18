@@ -1,0 +1,4 @@
+# ignore config file
+*.ini
+# ignore pycache 
+*.pyc
