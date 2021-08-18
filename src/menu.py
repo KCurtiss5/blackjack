@@ -26,16 +26,22 @@ class Menu:
         self.handle_menu_options(option)
 
     def customize_options(self) -> None:
-        config_parser = self.read_config("config.ini")
-        option_list=list(config_parser.items('GAME_CONFIGS'))
-        print("0: Exit")
-        for option in enumerate(option_list,1):
-            print('{0}: {1}'.format(option[0],option[1]))
-        option=input_validation.input_int_with_limits("\nEnter a setting you want to change: ", None, None)
-        value=input_validation.input_int_with_limits("\nEnter a value you'd like to change it to: ", 0, 99999)
-        config_parser.set('GAME_CONFIGS',str(option_list[option-1][0]), str(value))
-        with open('config.ini', 'wb') as configfile:
-           parser.write(configfile)
+        option=-1
+        while(option!=0):
+            config_parser = self.read_config("config.ini")
+            option_list=list(config_parser.items('GAME_CONFIGS'))
+            print("0: Exit")
+            for option in enumerate(option_list,1):
+                print('{0}: {1}'.format(option[0],option[1]))
+            option=input_validation.input_int_with_limits("\nEnter a setting you want to change: ", None, None)
+            if(option==0):
+                break
+            value=input_validation.input_int_with_limits("\nEnter a value you'd like to change it to: ", 0, 99999)
+            config_parser.set('GAME_CONFIGS',str(option_list[option-1][0]), str(value))
+            with open('config.ini', 'w') as configfile:
+               config_parser.write(configfile)
+            print("\nSetting changed!\n")
+        self.display_option_menu()
 
     def handle_menu_options(self, option_num: int) -> None:
         if (option_num==1): #if play game
