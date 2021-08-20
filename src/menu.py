@@ -1,7 +1,7 @@
 import sys, os
 import configparser
 import blackjack
-import input_validation
+import helper_functions
 
 class Menu:
     def __init__(self):
@@ -14,15 +14,11 @@ class Menu:
 
     def display_option_menu(self) -> None:
         os.system('cls' if os.name == 'nt' else 'clear')
-        print(''' ___  _     ___   ___  _  __    _  ___   ___  _  __
-| _ )| |   /   \ / __|| |/ / _ | |/   \ / __|| |/ /
-| _ \| |__ | - || (__ |   < | || || - || (__ |   <
-|___/|____||_|_| \___||_|\_\ \__/ |_|_| \___||_|\_\\
-        \n''')
+        helper_functions.print_banner()
         print("1. Play Game")
         print("2. Set Options")
         print("3. Leave Game")
-        option=input_validation.input_int_with_limits("\nEnter your option: ", 0, 4)
+        option=helper_functions.input_int_with_limits("\nEnter your option: ", 0, 4)
         self.handle_menu_options(option)
 
     def customize_options(self) -> None:
@@ -33,10 +29,10 @@ class Menu:
             print("0: Exit")
             for option in enumerate(option_list,1):
                 print('{0}: {1}'.format(option[0],option[1]))
-            option=input_validation.input_int_with_limits("\nEnter a setting you want to change: ", None, None)
+            option=helper_functions.input_int_with_limits("\nEnter a setting you want to change: ", None, None)
             if(option==0):
                 break
-            value=input_validation.input_int_with_limits("\nEnter a value you'd like to change it to: ", 0, 99999)
+            value=helper_functions.input_int_with_limits("\nEnter a value you'd like to change it to: ", 0, 99999)
             config_parser.set('GAME_CONFIGS',str(option_list[option-1][0]), str(value))
             with open('config.ini', 'w') as configfile:
                config_parser.write(configfile)
