@@ -11,3 +11,6 @@ def input_int_with_limits(message: str, lower_bound: int, upper_bound: int) -> i
         except AssertionError as e:
             print("Please enter a number between {0} and {1}.".format(lower_bound+1, upper_bound-1))
     return(option)
+
+def print_banner():
+    [print(line, end = "") for line in open('.banner.txt', "r").readlines()]
