@@ -2,6 +2,7 @@ import time
 import os
 import helper_functions
 import random
+import json
 
 class Card:
     def __init__(self, suit, num):
@@ -46,6 +47,9 @@ class Hand:
 
     def __str__(self):
         return ", ".join(str(c) for c in self.cards)
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
 
 class Dealer:
@@ -56,8 +60,8 @@ class Dealer:
         print("Dealer has a " + str(self.hand.cards[0]) + " and one covered card.")
 
 class Player():
-    def __init__(self, name):
-        self.money = int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["starting_cash"])
+    def __init__(self, name, money):
+        self.money = money
         self.bet_amount = 0
         self.name = name
         self.hand = Hand()
@@ -72,6 +76,9 @@ class Player():
             self.money = self.money + self.bet_amount
         else:
             self.money = self.money - self.bet_amount
+
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
 
     def __str__(self):
         return("{}, money: ${}".format(self.name, self.money))

@@ -1,9 +1,10 @@
-import sys, os
+import sys
 import blackjack
 import helper_functions
 import classes
 import re
 import time
+import json
 
 class Casino:
     def __init__(self, msg, players):
@@ -62,6 +63,7 @@ class Casino:
             self.addPlayer(num_of_new_players)
         elif (option_num==4):
             self.remove_player()
+        self.export_players()
         return
 
     def addPlayer(self, num):
@@ -82,7 +84,7 @@ class Casino:
                     print("Name does not fit desired format")
                 except Exception as e:
                     print(e)
-            new_player = classes.Player(name)
+            new_player = classes.Player(name, int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["starting_cash"]))
             self.players.append(new_player)
         self.display_msg = "Added Players!"
         return
@@ -93,7 +95,7 @@ class Casino:
             return
         option=-1
         orig_num_players = len(self.players)
-        while(option!=0):
+        while((option!=0) and (len(self.players) != 0)):
             print("0: Exit")
             for i, player in enumerate(self.players,1):
                 print('{0}: {1}'.format(i,player))
@@ -102,6 +104,15 @@ class Casino:
                 print("Removed: " + str(self.players.pop(option-1))+"\n")
         self.display_msg = "Removed " + str(orig_num_players-len(self.players)) + " players!"
         return
+
+    def export_players(self):
+        try:
+            fp = open("players.json","w")
+            fp.truncate(0)
+        except PermissionError:
+            return
+        #fp.write(json.dumps([player.__dict__ for player in self.players]))
+        fp.write(json.dumps(self.players,default=vars))
 
     def make_blackjack_table(self):
         config_parser = helper_functions.read_config("config.ini")
@@ -124,7 +135,7 @@ class Table():
         self.play_a_round()
 
     def play_a_round(self):
-        helper_functions.print_banner()
+        helper_functions.clear_terminal()
         if (self.passed_hands == self.number_of_hands_before_shuffle):
             self.passed_hands == 0
             self.deck.shuffle()
@@ -175,6 +186,16 @@ class Table():
 def casino_main(msg="",players=[]) -> None:
     casino = Casino(msg, players)
 
+def read_players_JSON(filename: str) -> list:
+    players = []
+    try:
+        fp = open("players.json","r")
+    except FileNotFoundError:
+        return players
+    raw_json = json.load(fp)
+    for player in raw_json:
+        players.append(classes.Player(player["name"],player["money"]))
+    return players
 
 if __name__ == '__main__':
-    casino_main()
+    casino_main("",read_players_JSON("players.json"))

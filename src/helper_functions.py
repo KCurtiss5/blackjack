@@ -12,9 +12,14 @@ def input_int_with_limits(message: str, lower_bound: int, upper_bound: int) -> i
         except ValueError as e:
             print("Please enter a positive integer.")
 
-def print_banner():
+def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
-    [print(line, end = "") for line in open('.banner.txt', "r").readlines()]
+
+def print_banner():
+    clear_terminal()
+    if(os.name == 'nt' and os.getcwd().endswith("\\blackjack")):#running from top-level directory
+        os.chdir("src")
+    [print(line, end = "") for line in open(".banner.txt", "r").readlines()]
 
 def read_config(config_filename: str) -> configparser.ConfigParser:
     config = configparser.ConfigParser()
