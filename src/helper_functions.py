@@ -15,10 +15,13 @@ def input_int_with_limits(message: str, lower_bound: int, upper_bound: int) -> i
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def print_banner():
-    clear_terminal()
+def change_dir():
     if(os.name == 'nt' and os.getcwd().endswith("\\blackjack")):#running from top-level directory
         os.chdir("src")
+
+def print_banner():
+    clear_terminal()
+    change_dir()
     [print(line, end = "") for line in open(".banner.txt", "r").readlines()]
 
 def read_config(config_filename: str) -> configparser.ConfigParser:

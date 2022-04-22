@@ -12,7 +12,6 @@ class Casino:
         self.display_option_menu()
         self.Table = self.make_blackjack_table()
 
-
     def display_option_menu(self) -> None:
         option=0
         while(option!=5):
@@ -27,6 +26,7 @@ class Casino:
             self.handle_menu_options(option)
             if(option==1):
                 return
+        self.export_players()
         print("Thanks for playing!")
         sys.exit(0)
 
@@ -58,16 +58,18 @@ class Casino:
         elif (option_num==2):
             self.customize_options()
         elif (option_num==3):
+            if((len(self.players)) >= int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["max_players"])):
+                self.display_msg = "Table is full!"
+                return
             num_of_new_players=helper_functions.input_int_with_limits("\nEnter the number of players you'd like to add: ", -1, 8-len(self.players))
             self.addPlayer(num_of_new_players)
         elif (option_num==4):
             self.remove_player()
-        self.export_players()
         return
 
     def addPlayer(self, num):
-        if(len(self.players)==7):
-            self.display_msg = "Table is full!"
+        if (num == 0):
+            self.display_msg = "You did not add any players."
             return
         regex = re.compile("^[A-Za-z]+( {1}[A-Za-z]+)*$")
         for i in range(0,num):
@@ -85,7 +87,7 @@ class Casino:
                     print(e)
             new_player = classes.Player(name, int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["starting_cash"]))
             self.players.append(new_player)
-        self.display_msg = "Added Players!"
+        self.display_msg = "Added " + str(num) + " Players!"
         return
 
     def remove_player(self):
@@ -110,8 +112,7 @@ class Casino:
             fp.truncate(0)
         except PermissionError:
             return
-        #fp.write(json.dumps([player.__dict__ for player in self.players]))
-        fp.write(json.dumps(self.players,default=vars))
+        fp.write(json.dumps([player for player in self.players],cls=classes.PlayerEncoder))
 
     def make_blackjack_table(self):
         config_parser = helper_functions.read_config("config.ini")
@@ -180,14 +181,13 @@ class Table():
         else:
             casino_main("",self.players)
 
-
-
 def casino_main(msg="",players=[]) -> None:
     casino = Casino(msg, players)
 
 def read_players_JSON(filename: str) -> list:
     players = []
     try:
+        helper_functions.change_dir()
         fp = open("players.json","r")
     except FileNotFoundError:
         return players
