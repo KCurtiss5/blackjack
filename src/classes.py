@@ -108,14 +108,13 @@ class Deck:
             random.shuffle(self.deck)
 
     def drawTopCard(self):
-        if (self.numCards == 0):
+        if (len(self.deck)==0):
             self.shuffle()
         #return a card and it should go to a hand
         return(self.deck.pop(0))
 
     def discard_card(self, card):
         self.discard_pile.append(card)
-        self.numCards = self.numCards-1
 
     def __str__(self):
         return(", ".join(str(c) for c in self.deck))
@@ -158,7 +157,8 @@ class Game:
             print("Standing, okay")
             return
         else:
-            self.hitOrMiss(player)
+            print("Actions are: \"hit\" or \"stand\"")
+            self.player_action(player)
 
     def dealer_action(self, dealer):
         while(dealer.hand.score < 17):
