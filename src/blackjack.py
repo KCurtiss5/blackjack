@@ -34,7 +34,7 @@ class Casino:
         option=-1
         while(option!=0):
             config_parser = helper_functions.read_config("config.ini")
-            option_list=list(config_parser.items('GAME_CONFIGS'))
+            option_list=list(config_parser.items())
             print("0: Exit")
             for option in enumerate(option_list,1):
                 print('{0}: {1}'.format(option[0],option[1]))
@@ -42,7 +42,7 @@ class Casino:
             if(option==0):
                 break
             value=helper_functions.input_int_with_limits("\nEnter a value you'd like to change it to: ", 0, 5000)
-            config_parser.set('GAME_CONFIGS',str(option_list[option-1][0]), str(value))
+            config_parser.set()
             with open('config.ini', 'w') as configfile:
                config_parser.write(configfile)
             print("\nSetting changed!\n")
@@ -58,7 +58,7 @@ class Casino:
         elif (option_num==2):
             self.customize_options()
         elif (option_num==3):
-            if((len(self.players)) >= int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["max_players"])):
+            if((len(self.players)) >= int(helper_functions.read_config("config.ini")["max_players"])):
                 self.display_msg = "Table is full!"
                 return
             print("\nCurrent players: ")
@@ -87,7 +87,7 @@ class Casino:
                     print("Name does not fit desired format")
                 except Exception as e:
                     print(e)
-            new_player = classes.Player(name, int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["starting_cash"]))
+            new_player = classes.Player(name, int(helper_functions.read_config("config.ini")["starting_cash"]))
             self.players.append(new_player)
         self.display_msg = "Added " + str(num) + " Players!"
         return
@@ -121,16 +121,16 @@ class Casino:
         fp.write(json.dumps([player for player in self.players],cls=classes.PlayerEncoder))
 
     def make_blackjack_table(self):
-        config_parser = helper_functions.read_config("config.ini")
-        game_configs = config_parser["GAME_CONFIGS"]
+        game_configs = helper_functions.read_config("config.ini")
         number_of_decks = int(game_configs["number_of_decks"])
         number_of_hands_before_shuffle = int(game_configs["number_of_hands_before_shuffle"])
         minimum_bet = int(game_configs["minimum_bet"])
-        return Table(number_of_decks, number_of_hands_before_shuffle, minimum_bet, self.players)
+        sleep_time = int(game_configs["sleep_time"])
+        return Table(number_of_decks, number_of_hands_before_shuffle, minimum_bet, self.players, sleep_time)
 
 
 class Table():
-    def __init__(self, num_decks, num_hands_bef_shuff, min_bet, players):
+    def __init__(self, num_decks, num_hands_bef_shuff, min_bet, players, sleep_time):
         self.number_of_hands_before_shuffle = num_hands_bef_shuff
         self.deck = classes.Deck(num_decks)
         self.deck.shuffle()
@@ -138,6 +138,7 @@ class Table():
         self.dealer = classes.Dealer()
         self.passed_hands = 0
         self.players = players
+        self.sleep_time = sleep_time
         self.play_a_round()
 
     def play_a_round(self):
