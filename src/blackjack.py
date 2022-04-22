@@ -61,6 +61,8 @@ class Casino:
             if((len(self.players)) >= int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["max_players"])):
                 self.display_msg = "Table is full!"
                 return
+            print("\nCurrent players: ")
+            self.__printPlayers()
             num_of_new_players=helper_functions.input_int_with_limits("\nEnter the number of players you'd like to add: ", -1, 8-len(self.players))
             self.addPlayer(num_of_new_players)
         elif (option_num==4):
@@ -90,6 +92,11 @@ class Casino:
         self.display_msg = "Added " + str(num) + " Players!"
         return
 
+    def __printPlayers(self) -> None:
+        for i, player in enumerate(self.players,1):
+                print('{0}: {1}'.format(i,player))
+        return 
+
     def remove_player(self):
         if (len(self.players)==0):
             self.display_msg = "There are no players to remove! Nobody removed."
@@ -98,8 +105,7 @@ class Casino:
         orig_num_players = len(self.players)
         while((option!=0) and (len(self.players) != 0)):
             print("0: Exit")
-            for i, player in enumerate(self.players,1):
-                print('{0}: {1}'.format(i,player))
+            self.__printPlayers()
             option=helper_functions.input_int_with_limits("\nEnter a player to remove: ", -1, len(self.players)+1)
             if (option!=0):
                 print("Removed: " + str(self.players.pop(option-1))+"\n")
