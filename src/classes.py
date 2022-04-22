@@ -1,6 +1,7 @@
 import time
 import helper_functions
 import random
+from json import JSONEncoder
 
 class Card:
     def __init__(self, suit, num):
@@ -73,6 +74,13 @@ class Player():
 
     def __str__(self):
         return("{}, money: ${}".format(self.name, self.money))
+
+class PlayerEncoder(JSONEncoder):
+    def default(self, obj):
+        return {
+            "name" : obj.name,
+            "money" : obj.money
+        }  
 
 class Deck:
     def __init__(self, numDecks):

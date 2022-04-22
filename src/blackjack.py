@@ -27,6 +27,7 @@ class Casino:
             self.handle_menu_options(option)
             if(option==1):
                 return
+        self.export_players()
         print("Thanks for playing!")
         sys.exit(0)
 
@@ -65,7 +66,6 @@ class Casino:
             self.addPlayer(num_of_new_players)
         elif (option_num==4):
             self.remove_player()
-        self.export_players()
         return
 
     def addPlayer(self, num):
@@ -113,8 +113,7 @@ class Casino:
             fp.truncate(0)
         except PermissionError:
             return
-        #fp.write(json.dumps([player.__dict__ for player in self.players]))
-        fp.write(json.dumps(self.players,default=vars))
+        fp.write(json.dumps([player for player in self.players],cls=classes.PlayerEncoder))
 
     def make_blackjack_table(self):
         config_parser = helper_functions.read_config("config.ini")
@@ -189,6 +188,7 @@ def casino_main(msg="",players=[]) -> None:
 def read_players_JSON(filename: str) -> list:
     players = []
     try:
+        helper_functions.change_dir()
         fp = open("players.json","r")
     except FileNotFoundError:
         return players
