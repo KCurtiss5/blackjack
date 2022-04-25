@@ -34,7 +34,7 @@ class Casino:
         option=-1
         while(option!=0):
             config_parser = helper_functions.read_config("config.ini")
-            option_list=list(config_parser.items())
+            option_list=list(config_parser.items('GAME_CONFIGS'))
             print("0: Exit")
             for option in enumerate(option_list,1):
                 print('{0}: {1}'.format(option[0],option[1]))
@@ -58,7 +58,7 @@ class Casino:
         elif (option_num==2):
             self.customize_options()
         elif (option_num==3):
-            if((len(self.players)) >= int(helper_functions.read_config("config.ini")["max_players"])):
+            if((len(self.players)) >= int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["max_players"])):
                 self.display_msg = "Table is full!"
                 return
             print("\nCurrent players: ")
@@ -87,7 +87,7 @@ class Casino:
                     print("Name does not fit desired format")
                 except Exception as e:
                     print(e)
-            new_player = classes.Player(name, int(helper_functions.read_config("config.ini")["starting_cash"]))
+            new_player = classes.Player(name, int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["starting_cash"]))
             self.players.append(new_player)
         self.display_msg = "Added " + str(num) + " Players!"
         return
@@ -121,7 +121,8 @@ class Casino:
         fp.write(json.dumps([player for player in self.players],cls=classes.PlayerEncoder))
 
     def make_blackjack_table(self):
-        game_configs = helper_functions.read_config("config.ini")
+        config_parser = helper_functions.read_config("config.ini")
+        game_configs = config_parser["GAME_CONFIGS"]
         number_of_decks = int(game_configs["number_of_decks"])
         number_of_hands_before_shuffle = int(game_configs["number_of_hands_before_shuffle"])
         minimum_bet = int(game_configs["minimum_bet"])
