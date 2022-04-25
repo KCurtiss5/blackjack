@@ -66,7 +66,7 @@ class Player():
 
     def calcBet(self, won, nat_blackjack_payout=False):
         if (nat_blackjack_payout):
-            self.money = self.money + (1.5 * self.bet_amount)
+            self.money = self.money + int(1.5 * self.bet_amount)
         elif(won):
             self.money = self.money + self.bet_amount
         else:
@@ -176,7 +176,7 @@ class Game:
         for p in player:
             print(p.name + " has " + str(p.hand.score), end=", so ")
             if (p.hand.score == 21 and len(p.hand.cards)==2 and dealer.hand.score != 21):
-                print("natural blackjack! 3:2 payout. they won ${}".format(1.5*p.bet_amount))
+                print("natural blackjack! 3:2 payout. they won ${} (rounded down)".format(int(1.5*p.bet_amount)))
                 p.calcBet(True, True)
             elif((p.hand.score > dealer.hand.score and p.hand.score <= 21) or (dealer.hand.score > 21 and p.hand.score <=21)):
                 print("they won $" + str(p.bet_amount))
