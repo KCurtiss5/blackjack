@@ -1,4 +1,4 @@
 # ignore pycache 
 *.pyc
 *.json
-src/config.ini
+*.ini
