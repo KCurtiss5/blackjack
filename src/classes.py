@@ -137,7 +137,7 @@ class Game:
     def player_action(self,player):
         print("\n" + player.name + " has " + str(player.hand) + ".",end="\n")
         if player.hand.score == 21:
-            print("\nYou already have blackjack!")
+            print("\nNatural blackjack!")
             time.sleep(self.sleep_time)
             return
         arg = input("Hit or stand?: ").lower().strip()

@@ -156,7 +156,7 @@ class Table():
             #deal cards to dealer
             self.dealer.hand.receiveCard(self.deck.drawTopCard())
         print("\nDealing...\n")
-        time.sleep(1)
+        time.sleep(self.sleep_time)
         #reveal dealer first card
         self.dealer.firstReveal()
         #Let players hit or stand
@@ -164,7 +164,7 @@ class Table():
             self.game.player_action(p)
         #dealer reveals his second card
         print("\nDealers turn...\n\nDealer has " + str(self.dealer.hand))
-        time.sleep(1.5)
+        time.sleep(self.sleep_time)
         #dealer does his thing
         self.game.dealer_action(self.dealer)
         #who won?
