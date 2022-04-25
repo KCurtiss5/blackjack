@@ -27,4 +27,4 @@ def print_banner():
 def read_config(config_filename: str) -> configparser.ConfigParser:
         config = configparser.ConfigParser()
         config.read(os.path.join('.', config_filename))
-        return config["GAME_CONFIGS"]
+        return config
