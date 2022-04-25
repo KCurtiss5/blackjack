@@ -176,7 +176,7 @@ class Game:
         for p in player:
             print(p.name + " has " + str(p.hand.score), end=", so ")
             if (p.hand.score == 21 and len(p.hand.cards)==2 and dealer.hand.score != 21):
-                print("natural blackjack! 3:2 payout. they won ${}".format(1.5*p.bet_amount))
+                print("natural blackjack! 3:2 payout. they won ${} rounded up".format(int(1.5*p.bet_amount)))
                 p.calcBet(True, True)
             elif((p.hand.score > dealer.hand.score and p.hand.score <= 21) or (dealer.hand.score > 21 and p.hand.score <=21)):
                 print("they won $" + str(p.bet_amount))
