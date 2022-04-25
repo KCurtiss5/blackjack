@@ -42,7 +42,7 @@ class Casino:
             if(option==0):
                 break
             value=helper_functions.input_int_with_limits("\nEnter a value you'd like to change it to: ", 0, 5000)
-            config_parser.set()
+            config_parser.set('GAME_CONFIGS',str(option_list[option-1][0]), str(value))
             with open('config.ini', 'w') as configfile:
                config_parser.write(configfile)
             print("\nSetting changed!\n")
