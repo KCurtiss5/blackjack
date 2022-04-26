@@ -9,7 +9,7 @@
 - [About the Project](#about-the-project)
 - [Goals for the Project](#goals-for-the-project)
 - [How to Play](#how-to-play)
-- [Have fun and win lots of money!](#have-fun-and-win-lots-of-money)
+- [End](#have-fun-and-win-lots-of-money)
 
 ## What is Blackjack?
 Blackjack is a fun gambling game involving deck(s) of cards. It is unique as a casino game due to the fact that with perfect play and desireable table rules, the game can potentially favor the player during certain rounds.
