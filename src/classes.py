@@ -100,11 +100,10 @@ class Deck:
 
     def shuffle(self):
         print("Shuffling deck...")
-        time.sleep(0.5)
         self.deck = self.deck + self.discard_pile
         self.numCards = self.numCards + len(self.discard_pile)
         self.discard_pile = []
-        for i in range(0,3):
+        for i in range(0,int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["number_of_hands_before_shuffle"])):
             random.shuffle(self.deck)
 
     def drawTopCard(self):
@@ -126,6 +125,7 @@ class Game:
     def __init__(self, deck, min_bet):
         self.deck = deck
         self.minimum_bet = min_bet
+        self.sleep_time = int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["sleep_time"])
 
     def round_of_betting(self, players):
         min_bet = self.minimum_bet
@@ -137,8 +137,8 @@ class Game:
     def player_action(self,player):
         print("\n" + player.name + " has " + str(player.hand) + ".",end="\n")
         if player.hand.score == 21:
-            print("\nYou already have blackjack!")
-            time.sleep(2.5)
+            print("\nNatural blackjack!")
+            time.sleep(self.sleep_time)
             return
         arg = input("Hit or stand?: ").lower().strip()
         if (arg == 'hit'):
@@ -164,7 +164,7 @@ class Game:
         while(dealer.hand.score < 17):
             card = self.deck.drawTopCard()
             dealer.hand.receiveCard(card)
-            time.sleep(0.5)
+            time.sleep(self.sleep_time)
             print("Hitting...\nDealer drew: " + str(card))
         if (dealer.hand.score>21):
             print("Busted.. ")

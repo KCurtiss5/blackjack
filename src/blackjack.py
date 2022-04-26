@@ -126,11 +126,12 @@ class Casino:
         number_of_decks = int(game_configs["number_of_decks"])
         number_of_hands_before_shuffle = int(game_configs["number_of_hands_before_shuffle"])
         minimum_bet = int(game_configs["minimum_bet"])
-        return Table(number_of_decks, number_of_hands_before_shuffle, minimum_bet, self.players)
+        sleep_time = int(game_configs["sleep_time"])
+        return Table(number_of_decks, number_of_hands_before_shuffle, minimum_bet, self.players, sleep_time)
 
 
 class Table():
-    def __init__(self, num_decks, num_hands_bef_shuff, min_bet, players):
+    def __init__(self, num_decks, num_hands_bef_shuff, min_bet, players, sleep_time):
         self.number_of_hands_before_shuffle = num_hands_bef_shuff
         self.deck = classes.Deck(num_decks)
         self.deck.shuffle()
@@ -138,6 +139,7 @@ class Table():
         self.dealer = classes.Dealer()
         self.passed_hands = 0
         self.players = players
+        self.sleep_time = sleep_time
         self.play_a_round()
 
     def play_a_round(self):
@@ -155,7 +157,7 @@ class Table():
             #deal cards to dealer
             self.dealer.hand.receiveCard(self.deck.drawTopCard())
         print("\nDealing...\n")
-        time.sleep(1)
+        time.sleep(self.sleep_time)
         #reveal dealer first card
         self.dealer.firstReveal()
         #Let players hit or stand
@@ -163,7 +165,7 @@ class Table():
             self.game.player_action(p)
         #dealer reveals his second card
         print("\nDealers turn...\n\nDealer has " + str(self.dealer.hand))
-        time.sleep(1.5)
+        time.sleep(self.sleep_time)
         #dealer does his thing
         self.game.dealer_action(self.dealer)
         #who won?
