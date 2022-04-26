@@ -103,7 +103,7 @@ class Deck:
         self.deck = self.deck + self.discard_pile
         self.numCards = self.numCards + len(self.discard_pile)
         self.discard_pile = []
-        for i in range(0,int(helper_functions.read_config("config.ini")["number_of_hands_before_shuffle"])):
+        for i in range(0,int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["number_of_hands_before_shuffle"])):
             random.shuffle(self.deck)
 
     def drawTopCard(self):
@@ -125,7 +125,7 @@ class Game:
     def __init__(self, deck, min_bet):
         self.deck = deck
         self.minimum_bet = min_bet
-        self.sleep_time = int(helper_functions.read_config("config.ini")["sleep_time"])
+        self.sleep_time = int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["sleep_time"])
 
     def round_of_betting(self, players):
         min_bet = self.minimum_bet
