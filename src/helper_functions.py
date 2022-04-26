@@ -24,7 +24,7 @@ def change_dir():
 def print_banner():
     clear_terminal()
     change_dir()
-    [print(line, end = "") for line in open(".banner.txt", "r").readlines()]
+    [print(line, end = "") for line in open("assets/.banner.txt", "r").readlines()]
 
 def read_config(config_filename: str) -> configparser.ConfigParser:
     global config
