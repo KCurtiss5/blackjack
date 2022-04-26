@@ -1,5 +1,8 @@
 import configparser
 import os
+import time
+
+config = None
 
 def input_int_with_limits(message: str, lower_bound: int, upper_bound: int) -> int:
     while(True):
@@ -25,6 +28,10 @@ def print_banner():
     [print(line, end = "") for line in open(".banner.txt", "r").readlines()]
 
 def read_config(config_filename: str) -> configparser.ConfigParser:
-    config = configparser.ConfigParser()
-    config.read(os.path.join('.', config_filename))
+    global config
+    if (not config):
+        config = configparser.ConfigParser()
+        config.read(os.path.join('.', config_filename))
+        print("Got config!")
+        time.sleep(1)
     return config
