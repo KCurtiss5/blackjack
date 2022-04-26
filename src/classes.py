@@ -125,7 +125,7 @@ class Game:
     def __init__(self, deck, min_bet):
         self.deck = deck
         self.minimum_bet = min_bet
-        self.sleep_time = int(helper_functions.read_config("config.ini")["number_of_hands_before_shuffle"])
+        self.sleep_time = int(helper_functions.read_config("config.ini")["sleep_time"])
 
     def round_of_betting(self, players):
         min_bet = self.minimum_bet
