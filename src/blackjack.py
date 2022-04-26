@@ -16,7 +16,7 @@ class Casino:
         option=0
         while(option!=5):
             helper_functions.print_banner()
-            print("\n" + self.display_msg + "\n")
+            print(f"\n{self.display_msg}\n")
             print("1. Play Game")
             print("2. Set Options")
             print("3. Add Player")
@@ -37,7 +37,7 @@ class Casino:
             option_list=list(config_parser.items('GAME_CONFIGS'))
             print("0: Exit")
             for option in enumerate(option_list,1):
-                print('{0}: {1}'.format(option[0],option[1]))
+                print(f"{option[0]}: {option[1]}")
             option=helper_functions.input_int_with_limits("\nEnter a setting you want to change: ", -1, len(option_list)+1)
             if(option==0):
                 break
@@ -76,7 +76,7 @@ class Casino:
         regex = re.compile("^[A-Za-z]+( {1}[A-Za-z]+)*$")
         for i in range(0,num):
             while(True):
-                name = input("What is player "+str(i+1)+"'s name?: ").strip().title()
+                name = input(f"What is player {i+1}'s name?: ").strip().title()
                 try:
                     assert(regex.search(name))
                     for p in self.players:
@@ -89,12 +89,12 @@ class Casino:
                     print(e)
             new_player = classes.Player(name, int(helper_functions.read_config("config.ini")["GAME_CONFIGS"]["starting_cash"]))
             self.players.append(new_player)
-        self.display_msg = "Added " + str(num) + " Players!"
+        self.display_msg = f"Added {num} Players!"
         return
 
     def __printPlayers(self) -> None:
         for i, player in enumerate(self.players,1):
-                print('{0}: {1}'.format(i,player))
+                print(f"{i}: {str(player)}")
         return 
 
     def remove_player(self):
@@ -108,8 +108,8 @@ class Casino:
             self.__printPlayers()
             option=helper_functions.input_int_with_limits("\nEnter a player to remove: ", -1, len(self.players)+1)
             if (option!=0):
-                print("Removed: " + str(self.players.pop(option-1))+"\n")
-        self.display_msg = "Removed " + str(orig_num_players-len(self.players)) + " players!"
+                print(f"Removed: {str(self.players.pop(option-1))}\n")
+        self.display_msg = f"Removed {str(orig_num_players-len(self.players))} players!"
         return
 
     def export_players(self):
@@ -125,17 +125,16 @@ class Casino:
         game_configs = config_parser["GAME_CONFIGS"]
         number_of_decks = int(game_configs["number_of_decks"])
         number_of_hands_before_shuffle = int(game_configs["number_of_hands_before_shuffle"])
+        number_of_shuffles = int(game_configs["number_of_shuffles"])
         minimum_bet = int(game_configs["minimum_bet"])
         sleep_time = int(game_configs["sleep_time"])
-        return Table(number_of_decks, number_of_hands_before_shuffle, minimum_bet, self.players, sleep_time)
+        return Table(number_of_decks, number_of_hands_before_shuffle, minimum_bet, self.players, number_of_shuffles, sleep_time)
 
 
 class Table():
-    def __init__(self, num_decks, num_hands_bef_shuff, min_bet, players, sleep_time):
+    def __init__(self, num_decks, num_hands_bef_shuff, min_bet, players, num_of_shuffles, sleep_time):
         self.number_of_hands_before_shuffle = num_hands_bef_shuff
-        self.deck = classes.Deck(num_decks)
-        self.deck.shuffle()
-        self.game = classes.Game(self.deck, min_bet)
+        self.game = classes.Game(num_decks, min_bet, num_of_shuffles)
         self.dealer = classes.Dealer()
         self.passed_hands = 0
         self.players = players
@@ -146,36 +145,27 @@ class Table():
         helper_functions.clear_terminal()
         if (self.passed_hands == self.number_of_hands_before_shuffle):
             self.passed_hands == 0
-            self.deck.shuffle()
+            self.game.deck.shuffle()
         self.passed_hands = self.passed_hands + 1
         print("\nEveryone, make a bet.\n")
         self.game.round_of_betting(self.players)
-        #deal cards to the players
+        print("\nDealing...\n")
         for i in range(0,2):
             for player in self.players:
-                player.hand.receiveCard(self.deck.drawTopCard())
-            #deal cards to dealer
-            self.dealer.hand.receiveCard(self.deck.drawTopCard())
-        print("\nDealing...\n")
+                player.hand[0].receiveCard(self.game.deck)
+            self.dealer.hand.receiveCard(self.game.deck)
         time.sleep(self.sleep_time)
         #reveal dealer first card
         self.dealer.firstReveal()
-        #Let players hit or stand
-        for p in self.players:
-            self.game.player_action(p)
-        #dealer reveals his second card
-        print("\nDealers turn...\n\nDealer has " + str(self.dealer.hand))
-        time.sleep(self.sleep_time)
-        #dealer does his thing
-        self.game.dealer_action(self.dealer)
-        #who won?
-        self.game.whoWon(self.players,self.dealer)
-        #clear hands
-        self.game.clearHands(self.deck,self.players,self.dealer)
-        #check if anyone has no money
+        for player in self.players:
+            self.game.player_action(player,self.game.deck)
+        print(f"\nDealers turn...\nDealer has {str(self.dealer.hand)}")
+        dealer_score = self.game.dealer_action(self.dealer)
+        self.game.whoWon(self.players, dealer_score)
+        self.game.clearHands(self.game.deck,self.players,self.dealer)
         for p in reversed(self.players):
             if p.money == 0:
-                print("I'm sorry " + p.name + ". You don't have any money. Please leave the table.")
+                print(f"I'm sorry {p.name}. You don't have any money. Please leave the table.")
                 self.players.remove(p)
         #If there are no more players, end the game
         if len(self.players) == 0:
