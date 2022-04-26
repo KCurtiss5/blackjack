@@ -5,11 +5,16 @@
 
 #### Table of Contents
 
-- [What is Blackjack?](#what-is-blackjack)
-- [About the Project](#about-the-project)
-- [Goals for the Project](#goals-for-the-project)
-- [How to Play](#how-to-play)
-- [Have fun and win lots of money!](#have-fun-and-win-lots-of-money)
+
+- [Text-only Blackjack](#text-only-blackjack)
+    - [By: Koby Curtiss](#by-koby-curtiss)
+        - [<KCurtiss5@gmail.com>](#kcurtiss5gmailcom)
+      - [Table of Contents](#table-of-contents)
+  - [What is Blackjack?](#what-is-blackjack)
+  - [About the Project](#about-the-project)
+  - [Goals for the Project](#goals-for-the-project)
+  - [How to Play](#how-to-play)
+    - [Have fun and win lots of money!](#have-fun-and-win-lots-of-money)
 
 ## What is Blackjack?
 Blackjack is a fun gambling game involving deck(s) of cards. It is unique as a casino game due to the fact that with perfect play and desireable table rules, the game can potentially favor the player during certain rounds.
@@ -56,4 +61,4 @@ Ideally, the game will continue to progress in efficiency and customization opti
 
 ### Have fun and win lots of money!
 
-![Pokerchips](src/assets/poker_chips.jpg)
+<img src="src/assets/poker-chips.jpeg" alt="drawing" width="200"/>
