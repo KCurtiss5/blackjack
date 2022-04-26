@@ -1,6 +1,5 @@
 import configparser
 import os
-import time
 
 config = None
 
@@ -32,6 +31,4 @@ def read_config(config_filename: str) -> configparser.ConfigParser:
     if (not config):
         config = configparser.ConfigParser()
         config.read(os.path.join('.', config_filename))
-        print("Got config!")
-        time.sleep(1)
     return config
