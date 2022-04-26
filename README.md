@@ -56,4 +56,4 @@ Ideally, the game will continue to progress in efficiency and customization opti
 
 ### Have fun and win lots of money!
 
-![Pokerchips](/assets/poker_chips.jpg)
+![Pokerchips](src/assets/poker_chips.jpg)
