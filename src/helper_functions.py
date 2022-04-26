@@ -25,6 +25,6 @@ def print_banner():
     [print(line, end = "") for line in open(".banner.txt", "r").readlines()]
 
 def read_config(config_filename: str) -> configparser.ConfigParser:
-        config = configparser.ConfigParser()
-        config.read(os.path.join('.', config_filename))
-        return config
+    config = configparser.ConfigParser()
+    config.read(os.path.join('.', config_filename))
+    return config
