@@ -1,6 +1,6 @@
-import time
 import helper_functions
-import random
+from random import shuffle
+from time import sleep
 from json import JSONEncoder
 
 class Card:
@@ -23,7 +23,6 @@ class Hand:
         return
 
     def splitCards(self, deck):
-        #give up cards
         card = self.cards.pop()
         self.cards.append(deck.drawTopCard())
         self.score = self.scoreHand()
@@ -54,15 +53,6 @@ class Hand:
             else:
                 self.score = self.score + 1
         return self.score
-
-    def calcBet(self, player, won, nat_blackjack_payout=False):
-        if (nat_blackjack_payout):
-            player.money = player.money + int(1.5 * self.bet)
-        elif(won):
-            player.money = player.money + self.bet
-        else:
-            player.money = player.money - self.bet
-        return
     
     def setFinished(self):
         self.finished=True
@@ -85,10 +75,10 @@ class Player():
         self.hand = [Hand(0)]
 
     def bet(self, minimum_bet: int):
-        self.hand[0].bet = helper_functions.input_int_with_limits(("{} enter your bet: ").format(self.name), minimum_bet-1, self.money+1)
+        self.hand[0].bet = helper_functions.input_int_with_limits((f"Enter your bet: "), minimum_bet-1, self.money+1)
 
     def __str__(self):
-        return("{}, money: ${}".format(self.name, self.money))
+        return(f"{self.name}, you have ${self.money}.")
 
 class PlayerEncoder(JSONEncoder):
     def default(self, obj):
@@ -112,7 +102,7 @@ class Deck:
                 for y in ["Jack","Queen","King","Ace"]:
                     deck.append(Card(x,y))
         for i in range(0,self.number_of_shuffles):
-            random.shuffle(deck)
+            shuffle(deck)
         return deck
 
     def shuffle(self):
@@ -123,7 +113,6 @@ class Deck:
     def drawTopCard(self):
         if (len(self.deck)==0):
             self.shuffle()
-        #return a card and it should go to a hand
         return(self.deck.pop(0))
     
     def __len__(self) -> int:
@@ -133,9 +122,6 @@ class Deck:
         return(", ".join(str(c) for c in self.deck))
 
 class Game:
-    #players is a list of all players
-    #deck is a deck object
-    #dealer is the dealer for the game
     def __init__(self, num_decks, min_bet, num_of_shuffles):
         self.deck = Deck(num_decks, num_of_shuffles)
         self.deck.shuffle()
@@ -145,8 +131,7 @@ class Game:
     def round_of_betting(self, players):
         min_bet = self.minimum_bet
         for player in players:
-            print()
-            print(player)
+            print(f"\n{player}")
             player.bet(min_bet)
 
     def player_action(self, player, deck):
@@ -164,7 +149,6 @@ class Game:
             if (arg == "split"):
                 if(len(player.hand[index].cards)== 2 and player.hand[index].cards[0].num == player.hand[index].cards[1].num 
                 and len(player.hand)<3 and player.money-2*player.hand[index].bet>0):
-                    #split hands
                     print("Successfully split:\n")
                     newHand = Hand(player.hand[index].bet)
                     transfer_card = player.hand[index].splitCards(deck)
@@ -200,7 +184,7 @@ class Game:
         while(dealer.hand.score < 17):
             dealer.hand.receiveCard(self.deck)
             print(f"Hitting... Dealer drew: {str(dealer.hand.cards[-1])}")
-            time.sleep(self.sleep_time)
+            sleep(self.sleep_time)
         if (dealer.hand.score > 21):
             print("Dealer busted.")
         return dealer.hand.score
@@ -208,7 +192,7 @@ class Game:
     def whoWon(self, players, dealer_score):
         print(f"\nDealer has {dealer_score}.")
         for player in players:
-            time.sleep(self.sleep_time)
+            sleep(self.sleep_time)
             for hand in player.hand:
                 if (hand.score > 21 or hand.score < dealer_score and dealer_score <= 21):
                     print(f"With {hand.score}, {player.name} {'busted and ' if hand.score > 21 else ''}lost ${hand.bet}.")

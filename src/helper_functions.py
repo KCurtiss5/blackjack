@@ -1,5 +1,5 @@
-import configparser
-import os
+from configparser import ConfigParser
+from os import name, system, getcwd, chdir, path
 
 config = None
 
@@ -15,20 +15,20 @@ def input_int_with_limits(message: str, lower_bound: int, upper_bound: int) -> i
             print("Please enter a positive integer.")
 
 def clear_terminal():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    system('cls' if name == 'nt' else 'clear')
 
 def change_dir():
-    if(os.name == 'nt' and os.getcwd().endswith("\\blackjack")):#running from top-level directory
-        os.chdir("src")
+    if(name == 'nt' and getcwd().endswith("\\blackjack")):#running from top-level directory
+        chdir("src")
 
 def print_banner():
     clear_terminal()
     change_dir()
     [print(line, end = "") for line in open("assets/.banner.txt", "r").readlines()]
 
-def read_config(config_filename: str) -> configparser.ConfigParser:
+def read_config(config_filename: str) -> ConfigParser:
     global config
     if (not config):
-        config = configparser.ConfigParser()
-        config.read(os.path.join('.', config_filename))
+        config = ConfigParser()
+        config.read(path.join('.', config_filename))
     return config

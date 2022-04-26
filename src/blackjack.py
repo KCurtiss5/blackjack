@@ -1,9 +1,9 @@
-import sys
 import helper_functions
 import classes
-import re
-import time
-import json
+from sys import exit
+from time import sleep
+from json import dumps,load
+from re import compile
 
 class Casino:
     def __init__(self, msg, players):
@@ -28,7 +28,7 @@ class Casino:
                 return
         self.export_players()
         print("Thanks for playing!")
-        sys.exit(0)
+        exit(0)
 
     def customize_options(self) -> None:
         option=-1
@@ -49,7 +49,7 @@ class Casino:
         return
 
     def handle_menu_options(self, option_num: int) -> None:
-        if (option_num==1): #if play game
+        if (option_num==1):
             if (len(self.players) == 0):
                 print("There are no players, you have to add some!")
                 num_of_new_players=helper_functions.input_int_with_limits("\nEnter the number of players you'd like to add: ", 0, 8)
@@ -73,7 +73,7 @@ class Casino:
         if (num == 0):
             self.display_msg = "You did not add any players."
             return
-        regex = re.compile("^[A-Za-z]+( {1}[A-Za-z]+)*$")
+        regex = compile("^[A-Za-z]+( {1}[A-Za-z]+)*$")
         for i in range(0,num):
             while(True):
                 name = input(f"What is player {i+1}'s name?: ").strip().title()
@@ -118,7 +118,7 @@ class Casino:
             fp.truncate(0)
         except PermissionError:
             return
-        fp.write(json.dumps([player for player in self.players],cls=classes.PlayerEncoder))
+        fp.write(dumps([player for player in self.players],cls=classes.PlayerEncoder))
 
     def make_blackjack_table(self):
         config_parser = helper_functions.read_config("config.ini")
@@ -154,8 +154,7 @@ class Table():
             for player in self.players:
                 player.hand[0].receiveCard(self.game.deck)
             self.dealer.hand.receiveCard(self.game.deck)
-        time.sleep(self.sleep_time)
-        #reveal dealer first card
+        sleep(self.sleep_time)
         self.dealer.firstReveal()
         for player in self.players:
             self.game.player_action(player,self.game.deck)
@@ -167,7 +166,6 @@ class Table():
             if p.money == 0:
                 print(f"I'm sorry {p.name}. You don't have any money. Please leave the table.")
                 self.players.remove(p)
-        #If there are no more players, end the game
         if len(self.players) == 0:
             casino_main("There are no more players.. create some more and play again!")
         while (True):
@@ -189,7 +187,10 @@ def read_players_JSON(filename: str) -> list:
         fp = open("players.json","r")
     except FileNotFoundError:
         return players
-    raw_json = json.load(fp)
+    except PermissionError:
+        print("Cannot read players. Data will not be used if it exists.")
+        sleep(3)
+    raw_json = load(fp)
     for player in raw_json:
         players.append(classes.Player(player["name"],player["money"]))
     return players
