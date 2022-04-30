@@ -1,6 +1,6 @@
 import helper_functions
 import classes
-from sys import exit
+from sys import exit, maxsize
 from time import sleep
 from json import dumps,load
 from re import compile
@@ -40,8 +40,11 @@ class Casino:
                 print(f"{option[0]}: {option[1]}")
             option=helper_functions.input_int_with_limits("\nEnter a setting you want to change: ", -1, len(option_list)+1)
             if(option==0):
+                self.display_msg = "Settings changed."
                 break
-            value=helper_functions.input_int_with_limits("\nEnter a value you'd like to change it to: ", 0, 5000)
+            min = config_parser.getint("LIMITS", f"{option_list[option-1][0]}_min",fallback=0)-1
+            max = config_parser.getint("LIMITS", f"{option_list[option-1][0]}_max",fallback=maxsize+1)+1
+            value=helper_functions.input_int_with_limits("\nEnter a value you'd like to change it to: ", min, max)
             config_parser.set('GAME_CONFIGS',str(option_list[option-1][0]), str(value))
             with open('config.ini', 'w') as configfile:
                config_parser.write(configfile)
@@ -121,6 +124,7 @@ class Casino:
         fp.write(dumps([player for player in self.players],cls=classes.PlayerEncoder))
 
     def make_blackjack_table(self):
+        #will want parser.getboolean() when applicable
         config_parser = helper_functions.read_config("config.ini")
         game_configs = config_parser["GAME_CONFIGS"]
         number_of_decks = int(game_configs["number_of_decks"])
